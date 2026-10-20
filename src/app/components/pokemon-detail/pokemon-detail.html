@@ -1,0 +1,38 @@
+<!-- Se o Pokémon estiver disponível, exibe seus detalhes -->
+@if (pokemon) {
+    <!-- Essa div contém os detalhes do Pokémon -->
+  <div class="detail-container">
+    <!-- Botão para voltar à lista de Pokémon -->
+    <a routerLink="/" class="back-btn">← Voltar para a lista</a>
+    <!-- Cabeçalho do Pokémon -->
+    <div class="pokemon-header">
+      <img [src]="pokemon.sprites.other['official-artwork'].front_default" [alt]="pokemon.name">
+      <h2>#{{ pokemon.id }} {{ pokemon.name }}</h2>
+      
+      <!-- Exibe os tipos do Pokémon -->
+      <div class="types">
+        <!-- Repete para cada tipo do Pokémon -->
+        @for (typeInfo of pokemon.types; track typeInfo.type.name) {
+          <span class="type-badge">{{ typeInfo.type.name }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Estatísticas Base -->
+    <div class="stats-card">
+      <h3>Estatísticas Base</h3>
+      <ul>
+        <!-- Repete para cada estatística do Pokémon -->
+        @for (stat of pokemon.stats; track stat.stat.name) {
+          <li>
+            <strong>{{ stat.stat.name }}:</strong> {{ stat.base_stat }}
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Senao exibe uma mensagem de carregamento -->
+} @else {
+  <p class="loading">Carregando detalhes do Pokémon...</p>
+}

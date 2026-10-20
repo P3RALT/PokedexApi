@@ -1,0 +1,13 @@
+<div class="pokedex-grid">
+
+<!-- Renderiza a lista de pokémons -->
+    @for (pokemon of pokemons; track pokemon.id) {
+    <div class="pokemon-card" [routerLink]="['/pokemon', pokemon.id]">
+      <img [src]="pokemon.image" [alt]="pokemon.name" loading="lazy">
+      <h3>#{{ pokemon.id }} {{ pokemon.name }}</h3>
+    </div>
+  } @empty {
+   
+    <p>Carregando Pokédex...</p>
+  }
+</div>
