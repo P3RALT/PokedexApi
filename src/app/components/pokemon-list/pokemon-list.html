@@ -1,13 +1,28 @@
-<div class="pokedex-grid">
+<div class="pokedex-container">
+  
+  <!-- Campo de Busca com a ligação [formControl] obrigatoriamente ativa -->
+  <div class="search-bar">
+    <input 
+      type="text" 
+      (input)="onSearch($event)" 
+      placeholder="Pesquisar Pokémon por nome ou número (#)...">
+  </div>
 
-<!-- Renderiza a lista de pokémons -->
-    @for (pokemon of pokemons; track pokemon.id) {
-    <div class="pokemon-card" [routerLink]="['/pokemon', pokemon.id]">
-      <img [src]="pokemon.image" [alt]="pokemon.name" loading="lazy">
-      <h3>#{{ pokemon.id }} {{ pokemon.name }}</h3>
-    </div>
-  } @empty {
-   
-    <p>Carregando Pokédex...</p>
-  }
+  <!-- O loop TEM de percorrer 'filteredPokemons' -->
+  <div class="pokedex-grid">
+    @for (pokemon of filteredPokemons; track pokemon.id) {
+      <div class="pokemon-card" [routerLink]="['/pokemon', pokemon.id]">
+
+        <button class="fav-btn" [class.active]="isFav(pokemon.id)"  (click)="toggleFav($event, pokemon.id)"
+          title="Marcar como favorito"> ★ </button>
+
+
+        <img [src]="pokemon.image" [alt]="pokemon.name" loading="lazy">
+        <h3>#{{ pokemon.id }} {{ pokemon.name }}</h3>
+      </div>
+    } @empty {
+      <p class="no-results">Nenhum Pokémon encontrado com esse nome ou número. </p>
+    }
+  </div>
+
 </div>

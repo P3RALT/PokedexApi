@@ -11,6 +11,9 @@
 npm-debug.log
 yarn-error.log
 
+# Cache local do Angular CLI
+/.angular
+
 # IDEs and editors
 .idea/
 .project

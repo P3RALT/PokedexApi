@@ -1,47 +1,50 @@
-// Imports necessários do Angular para criar o componente, injetar serviços e detectar mudanças.
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-// import commonModule do Angular, que fornece diretivas e pipes comuns.
 import { CommonModule } from '@angular/common';
-// Importa o módulo RouterLink do Angular, que permite navegação entre rotas.
 import { RouterLink } from '@angular/router';
-// Import serviço PokemonService, por interagir com a API de Pokémon.
 import { PokemonService } from '../../services/pokemon';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FavoritesService } from '../../services/favorites';
 
 // Componente Angular que exibe uma lista de Pokémon, usando o serviço PokemonService para buscar dados da API.
-@Component({
   // Selector do componente, usado para referenciá-lo no HTML.
-  selector: 'app-pokemon-list',
   // Strandalone indica que o componente é independente
-  standalone: true,
   // Imports define os módulos que o componente utiliza
-  imports: [CommonModule, RouterLink],
   // TemplateUrl define o caminho para o arquivo HTML
-  templateUrl: './pokemon-list.html',
   // StyleUrl define o caminho para o arquivo SCSS
+
+@Component({
+  selector: 'app-pokemon-list',
+  standalone: true,
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  templateUrl: './pokemon-list.html',
   styleUrl: './pokemon-list.scss'
 })
 
 // Classe PokemonListComponent implementa a interface OnInit
+// Injecta o serviço PokemonService para buscar informações da API de Pokémon.
+// Cdr ref é usado para detectar mudanças e atualizar o HTML do componente.
+// Propriedade para armazenar a lista de Pokémon.
+
+
 export class PokemonListComponent implements OnInit {
-  // Injecta o serviço PokemonService para buscar informações da API de Pokémon.
   pokemonService = inject(PokemonService);
-  // Cdr ref é usado para detectar mudanças e atualizar o HTML do componente.
+  favoritesService = inject(FavoritesService);
   cdr = inject(ChangeDetectorRef);
-  // Propriedade para armazenar a lista de Pokémon.
+
+  // Propriedades  
   pokemons: any[] = [];
+  filteredPokemons: any[] = [];
 
+  // Criação do Campo de Busca; Reativo
+  searchControl = new FormControl('');
 
-  // O método ngOnInit  componente de inicializado.
+  // O método ngOnInit  componente de inicializado; Chama getPokemons para buscar a lista de Pokémon. processa os dados recebidos;
+  // const id extrai o ID do Pokémon a partir da URL fornecida pela API; Mapeia API, ID e URL da imagem de cada Pokémon.
+
   ngOnInit(): void {
-    // Chama o método getPokemons para buscar a lista de Pokémon.
     this.pokemonService.getPokemons().subscribe({
-      // Se a chamada for bem-sucedida, processa os dados recebidos.
       next: (response: any) => {
-        // log os dados recebidos
-        console.log('Dados da PokeAPI recebidos:', response);
-        // Mapeia os resultados da API, ID e URL da imagem de cada Pokémon.
         this.pokemons = response.results.map((poke: any) => {
-          // const id extrai o ID do Pokémon a partir da URL fornecida pela API.
           const id = poke.url.split('/').filter(Boolean).pop();
           // Retorna um objeto com o nome, ID e URL da imagem do Pokémon.
           return {
@@ -50,11 +53,61 @@ export class PokemonListComponent implements OnInit {
             image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
           };
         });
-        // Chama detectChanges para atualizar o HTML do componente imediatamente após a atualização da lista
+
+        // Atualiza a lista filtrada e detecta mudanças para atualizar o HTML do componente.
+        this.filteredPokemons = this.pokemons;
         this.cdr.detectChanges(); 
       },
-      // Error caso ocorra um erro na chamada à API, exibe uma mensagem de erro no console.
+
       error: (err) => console.error('Erro na chamada à API:', err)
     });
   }
+
+  // Filtra a lista com base na busca; Converte o termo para minúsculas e remove espaços em branco.
+  // Se o termo estiver vazio, exibe a lista completa;
+
+  filterPokemons(term: string): void {
+  const cleanTerm = term.toLowerCase().trim();
+  
+  if (!cleanTerm) {
+    this.filteredPokemons = [...this.pokemons];
+  } else {
+    this.filteredPokemons = this.pokemons.filter(pokemon => 
+      pokemon.name.toLowerCase().includes(cleanTerm) || 
+      pokemon.id.toString().includes(cleanTerm) // Permite encontrar pelo número/ID
+    );
+  }
+  
+  this.cdr.detectChanges();
 }
+
+  onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    const cleanTerm = value.toLowerCase().trim();
+
+      if (!cleanTerm) {
+        this.filteredPokemons = [...this.pokemons];
+      } else {
+        this.filteredPokemons = this.pokemons.filter(pokemon => 
+          pokemon.name.toLowerCase().includes(cleanTerm) || 
+          pokemon.id.toString().includes(cleanTerm)
+        );
+      }
+
+  console.log('3. Pokémons encontrados após filtro:', this.filteredPokemons.length);
+  this.cdr.detectChanges();
+}
+
+toggleFav(event: Event, id: string): void {
+    event.stopPropagation(); // Impede de abrir a página de detalhes ao clicar na estrela
+    this.favoritesService.toggleFavorite(id);
+    this.cdr.detectChanges();
+  }
+
+  isFav(id: string): boolean {
+    return this.favoritesService.isFavorite(id);
+  }
+}
+
+
+

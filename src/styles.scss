@@ -1,13 +1,52 @@
-/* Reset global e estilos base */
+/* Reset básico e tipografia */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f2f5;
-  color: #333;
+  font-family: 'Segoe UI', 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f4f6f9 0%, #e8ecf4 100%);
+  color: #2c3e50;
   min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Cores oficiais dos Tipos de Pokémon */
+.type-badge {
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #fff;
+  display: inline-block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  &.grass   { background: linear-gradient(135deg, #78C850, #5da838); }
+  &.fire    { background: linear-gradient(135deg, #F08030, #d96720); }
+  &.water   { background: linear-gradient(135deg, #6890F0, #4a75d8); }
+  &.bug     { background: linear-gradient(135deg, #A8B820, #8a9918); }
+  &.normal  { background: linear-gradient(135deg, #A8A878, #8d8d5f); }
+  &.poison  { background: linear-gradient(135deg, #A040A0, #832f83); }
+  &.electric {
+    background: linear-gradient(135deg, #F8D030, #e6c000);
+    color: #2c3e50;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
 }
