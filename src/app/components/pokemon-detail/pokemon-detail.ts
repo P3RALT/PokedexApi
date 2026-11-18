@@ -6,7 +6,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { PokemonService } from '../../services/pokemon';
+import { PokemonService } from '../../services/servicesPokemon/pokemon';
 
 // Define o componente Angular com o decorador @Component, especificando o seletor, os estilos e o template.
   // - Selector do componente, usado para referenciá-lo no HTML.

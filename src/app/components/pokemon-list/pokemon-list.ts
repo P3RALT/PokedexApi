@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { PokemonService } from '../../services/pokemon';
+import { PokemonService } from '../../services/servicesPokemon/pokemon';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { FavoritesService } from '../../services/favorites';
+import { FavoritesService } from '../../services/servicesPokemon/favorites';
 
 // Componente Angular que exibe uma lista de Pokémon, usando o serviço PokemonService para buscar dados da API.
   // Selector do componente, usado para referenciá-lo no HTML.
