@@ -7,6 +7,32 @@
       (input)="onSearch($event)" 
       placeholder="Pesquisar Pokémon por nome ou número (#)...">
   </div>
+  <!-- Painel Ecossistema / IA -->
+   @if (carregandoIA) {
+    <div class="ia-banner loading">
+      🤖 Analisando habitat e compatibilidade ecológica com Gemini AI...
+    </div>
+  }
+
+  @if (erroIA) {
+    <div class="ia-banner error">
+      ⚠️ {{ erroIA }}
+    </div>
+  }
+
+  @if (analiseEcologica && localidade) {
+    <div class="ia-result-card">
+      <div class="card-header">
+        <h3>📍 {{ localidade.localidade }} / {{ localidade.uf }}</h3>
+        <span class="badge">{{ analiseEcologica.encounter_rate }}</span>
+      </div>
+      <div class="card-body">
+        <p><strong>Compatibilidade:</strong> {{ (analiseEcologica.compatibility_score * 100).toFixed(0) }}%</p>
+        <p><strong>Micro-habitat:</strong> {{ analiseEcologica.micro_habitat }}</p>
+        <p><strong>Justificativa da IA:</strong> {{ analiseEcologica.justification }}</p>
+      </div>
+    </div>
+  }
 
   <!-- O loop TEM de percorrer 'filteredPokemons' -->
   <div class="pokedex-grid">

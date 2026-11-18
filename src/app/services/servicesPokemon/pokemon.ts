@@ -1,34 +1,46 @@
-// Import { Injectable, inject } from '@angular/core'; Injectable serve para marcar a classe como um serviço injetável,
-// e inject é usado para injetar dependências.
-// Import { HttpClient } from '@angular/common/http'; Serviço para fazer requisições HTTP.
-// Import { Observable } from 'rxjs'; Serviço para lidar com fluxos de dados assíncronos, como respostas de requisições HTTP.
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-// A classe PokemonService é marcada como injetável e fornecida no nível raiz da aplicação.
+// Interface exportada para tipar os componentes
+export interface Pokemon {
+  id: number;
+  name: string;
+  image: string;
+  url?: string;
+  types?: any[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
-
-// A classe PokemonService é responsável por interagir com a API de Pokémon.
 export class PokemonService {
-  // Injeta o HttpClient para fazer requisições HTTP.
   private http = inject(HttpClient);
-  // Define a URL base da API de Pokémon.
   private apiUrl = 'https://pokeapi.co/api/v2/pokemon';
 
-  // Busca uma lista de Pokémon, com parâmetros
-  getPokemons(limit: number = 151, offset: number = 0): Observable<any> {
-    // Retorna um Observable que emite a resposta da requisição HTTP GET.
-    return this.http.get(`${this.apiUrl}?limit=${limit}&offset=${offset}`);
+  // Busca a lista de Pokémon e já formata id e image
+  getPokemons(limit: number = 151, offset: number = 0): Observable<Pokemon[]> {
+    return this.http.get<any>(`${this.apiUrl}?limit=${limit}&offset=${offset}`).pipe(
+      map(response => {
+        return response.results.map((item: any) => {
+          // Extrai o ID numérico da URL (ex: "https://pokeapi.co/api/v2/pokemon/25/")
+          const urlParts = item.url.split('/').filter(Boolean);
+          const id = parseInt(urlParts[urlParts.length - 1], 10);
+
+          return {
+            id,
+            name: item.name,
+            image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+            url: item.url
+          };
+        });
+      })
+    );
   }
-  // Busca detalhes de um Pokémon, usando o ID do Pokémon.
-  getPokemonDetail(id: string): Observable<any> {
-    // Retorna um Observable que emite a resposta da requisição HTTP GET, usando o ID fornecido.
+
+  // Busca detalhes individuais de um Pokémon
+  getPokemonDetail(id: string | number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${id}`);
   }
-
-
 }
